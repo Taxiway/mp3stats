@@ -2,6 +2,8 @@ require_relative 'album'
 require_relative 'artist'
 
 class Song
+  attr_reader :album
+
   def initialize(artist, title, album, year, track)
     @artist = artist
     @title = title

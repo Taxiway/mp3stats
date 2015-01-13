@@ -16,25 +16,53 @@ class Stats
     end
   end
 
+  def generate_table(headline, titles, rows, attributes, count, key_attr)
+    puts "<p class=\"center\">#{headline}</p>"
+    puts %q{<table class="style1">}
+    puts "<tr>"
+    puts "<th>Rank</th>"
+    titles.each do |title|
+      puts "<th>#{title}</th>"
+    end
+    puts "</tr>"
+
+    iter = rows.each
+    last_val = nil
+    rank = 0
+    (100 + count).times do |ind|
+      item = iter.next
+      val = item.method(key_attr).call
+      rank = ind if val != last_val
+      break if rank > count
+      puts "<tr#{get_rank_class(rank + 1)}><td>#{rank + 1}</td>"
+      attributes.each do |attr|
+        puts "<td>#{item.method(attr).call}</td>"
+      end
+      last_val = val
+    end
+    puts "</table>"
+  end
+
   def get_stats
     downloader = Downloader.new(MP3_URL)
     parser = Parser.new
     parser.parse(downloader.get_content)
-    return
-    dict = dict.sort_by {|artist, count| -count}
-    iter = dict.each
-    puts %q{<table class="style1">}
-    puts "<tr><th>Rank</th><th>Artist</th><th>Count</th></tr>"
-    last_count = 1024
-    rank = 0
-    100.times do |ind|
-      artist, count = iter.next
-      rank = ind if count != last_count
-      break if rank > 20
-      puts "<tr#{get_rank_class(rank + 1)}><td>#{rank + 1}</td><td>#{artist}</td><td>#{count}</td></tr>"
-      last_count = count
-    end
-    puts "</table>"
+
+    artists = Artist.all
+    generate_table("Top 20 singers with most songs",
+                   ["Artist", "Songs"],
+                   artists.sort_by {|artist| -artist.songcount},
+                   [:name, :songcount], 20, :songcount)
+    generate_table("Top 20 singers with most albums",
+                   ["Artist", "Albums"],
+                   artists.sort_by {|artist| -artist.albumcount},
+                   [:name, :albumcount], 20, :albumcount)
+
+    albums = Album.all
+    generate_table("Top 20 albums with most songs",
+                   ["Album", "Songs"],
+                   albums.sort_by {|album| -album.songcount},
+                   [:name, :songcount], 20, :songcount)
   end
 end
 

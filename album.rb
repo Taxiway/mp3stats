@@ -1,4 +1,6 @@
 class Album
+  attr_reader :name
+
   @@albums = Hash.new
 
   def initialize(name)
@@ -19,6 +21,10 @@ class Album
 
   def inspect
     "Album #{@name}\n#{@songs.length} songs"
+  end
+
+  def songcount
+    @songs.length
   end
 
   def self.get(name)
