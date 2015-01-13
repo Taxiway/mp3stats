@@ -8,6 +8,7 @@ class Downloader
   end
 
   def get_content
+    puts "Crawling start: #{@url}"
     @content = Array.new
 
     open(@url, "r:utf-8") do |f|

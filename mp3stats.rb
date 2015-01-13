@@ -19,7 +19,8 @@ class Stats
   def get_stats
     downloader = Downloader.new(MP3_URL)
     parser = Parser.new
-    dict = parser.parse(downloader.get_content)
+    parser.parse(downloader.get_content)
+    return
     dict = dict.sort_by {|artist, count| -count}
     iter = dict.each
     puts %q{<table class="style1">}
